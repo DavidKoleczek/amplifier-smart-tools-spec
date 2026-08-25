@@ -1,0 +1,92 @@
+# Structure
+
+A smart tool is a library with wrappers around it. The library holds the capability; every
+other surface is a thin adapter that exposes the same capability in a different shape.
+
+This is the single decision that makes the rest possible. A capability that lives in a
+library can be called from a CLI, an MCP server, a web service, someone's Python app, or an
+agent that has never heard of Amplifier. A capability that lives in a CLI can only be
+called by whoever is willing to shell out to it.
+
+## The library is the tool
+
+Everything the tool can do is reachable from the library.
+
+The rule is one-directional and absolute: no capability exists only in a wrapper. If the
+CLI can do it, the library can do it. If a wrapper needs behavior the library does not
+have, that behavior gets added to the library and the wrapper calls it.
+
+Wrappers may legitimately hold things that are genuinely about their own medium: argument
+parsing, terminal output formatting, reading a file path into the string the library wants,
+HTTP routing. None of that is capability. The test is whether removing the wrapper would
+lose anything a different caller might want.
+
+Callers who want to constrain the surface they depend on should put their own adapter in
+front of the library, so their contract is with the adapter rather than with everything the
+library happens to expose.
+
+## The CLI
+
+Every smart tool ships a CLI, and it is a thin wrapper.
+
+The CLI is what makes the tool usable from a shell script, from an agent that can run
+commands, and from any harness that has no way to import a Python object. It is the surface
+that requires no integration work from the caller, which is why it ships by default rather
+than on request.
+
+Thin means the CLI hooks up argument parsing and I/O conventions and then calls the
+library. Domain logic in the CLI is a defect, because it is capability that the library
+cannot reach.
+
+The CLI may add things that only make sense at a command line. Loading a file path into a
+value the library takes as data is the common case, and it is legitimate precisely because
+the library still accepts the data directly.
+
+## Optional surfaces
+
+Anything beyond the library and the CLI is optional, and optional means the tool works
+completely without it.
+
+**MCP.** A smart tool may expose an MCP server. This is cheap to add once the library
+boundary is clean and it makes the tool reachable from hosts that speak MCP and nothing
+else. It is not required, and nothing in this specification assumes it exists.
+
+**A web service or UI.** A tool may ship a local service and a browser interface, and for
+some tools this is genuinely the right way to drive them. It must never be the only way,
+and it must not start unless asked. A tool that spins up a web server as a side effect of
+being used is doing something the caller did not request.
+
+**Others.** The list is open. The constraint is the same each time: a new surface is a new
+adapter over the same library, and it adds no capability of its own.
+
+## The AI capability
+
+A smart tool has to do something genuinely powered by a model. If every path through it is
+deterministic code, it is a tool, and that is fine, but it is not a smart tool. This is the
+line that makes the category mean anything.
+
+At the same time, the straight code paths run with no model provider configured. A caller
+that only wants the deterministic capabilities never has to supply model credentials, and
+the tool must not refuse to load without them. A tool that demands a provider at import
+time has made its AI capability mandatory, which is the opposite of what this asks for.
+
+The model-backed paths are ordinary capabilities of the library. They take arguments, they
+return values, and they live alongside the deterministic ones rather than behind a separate
+door. What differs is that they are non-deterministic and they cost tokens, which is why
+the caller is told which is which. How they are told is covered in
+[invocation](invocation.md).
+
+The internals are the tool's business. Whether a given capability is implemented as code,
+as a model call, or as a mix is not something the caller needs to reason about in order to
+use it correctly.
+
+## Open questions
+
+**Whether a generator is better than a convention.** Today each tool implements its own
+wrappers following the same pattern. The alternative is a generator that emits CLI and MCP
+surfaces from the library, or a generic host that loads libraries and exposes them. Both
+have been raised. Neither has been tried, and the pattern is cheap enough to keep until one
+of them is.
+
+**Packaging and distribution.** How a smart tool is published and installed, and under what
+naming, is unresolved and out of scope for this chapter.
