@@ -26,16 +26,16 @@ reporting is worth generalizing once one exists, and not before.
 ### 2. What a tool discloses about itself
 
 The specification says callers are told which capabilities are model-backed, on the grounds
-that cost and determinism are the caller's business, and that the `--help` listing is where
-they are told.
+that cost and determinism are the caller's business. The library declares it and the CLI
+renders it.
 
 The competing position is that a tool should be implementation-invisible, so that it stays
 free to change how a capability is implemented without breaking anyone. Both are defensible
 and they conflict.
 
 **What would settle it:** a decision rather than evidence. This one does not resolve by
-building. If the distinction is dropped, the `--help` listing loses that field and nothing
-else in the specification changes.
+building. Dropping the distinction would touch several sections of the invocation chapter
+and the disclosure rule in the structure chapter, and nothing else.
 
 ### 3. Conventions shared across tools
 
@@ -48,7 +48,7 @@ without coordinating, it is a convention worth writing down. If they do not, it 
 
 ### 4. Packaging and distribution
 
-How a smart tool is published and installed, and under what naming, is unresolved.
+How a smart tool is published and installed is unresolved.
 
 Related to it: today each tool implements its own wrappers by following the same pattern.
 The alternative is a generator that emits CLI and MCP surfaces from the library, or a
@@ -65,7 +65,7 @@ shape, kept out so the specification stays about what a single tool is.
 
 **Registry and discovery.** There will be a registry, and discovery is its own project. Its
 format is undecided. The specification requires only that each tool own a self-description
-in its own repo, so a registry can consume it whenever one exists.
+at its own distribution root, so a registry can consume it whenever one exists.
 
 **Host awareness.** The inverse direction, where a host automatically discovers and offers
 the smart tools already installed, is secondary and not blocking. Tools ship first.

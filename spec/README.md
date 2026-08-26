@@ -50,10 +50,9 @@ Smart tools are built on three principles that inform everything else in this sp
 - **[Structure](structure.md)**: the layers a smart tool is built from. Library core, CLI
   wrapper, optional additional surfaces, and the rules governing the shipped AI capability.
 - **[Manifest](manifest.md)**: how a smart tool describes itself: what it is, what it is
-  for, what it runs on, and what it can do. This is the artifact a registry will later
-  consume, and it is owned in the tool's own repo.
-- **[Invocation](invocation.md)**: calling a smart tool. Straight and smart paths, passing
-  context in, getting artifacts out, and failure semantics.
+  for, and what it runs on. This is the artifact a registry will later consume, and it
+  ships with the tool.
+- **[Invocation](invocation.md)**: calling a smart tool. Straight and smart paths,
+  self-description, passing context in, getting artifacts out, and failure semantics.
 
-An example specification *for a smart tool* lives at [`docs/examples/digital-twin-universe.md`](../docs/examples/digital-twin-universe.md).
 Future parts and ideas of the spec are documented in [`ROADMAP.md`](../ROADMAP.md).

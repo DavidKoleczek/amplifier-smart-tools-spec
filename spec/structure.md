@@ -4,8 +4,9 @@ A smart tool is a library with wrappers around it. The library holds the capabil
 other surface is a thin adapter that exposes the same capability in a different shape.
 
 This is the single decision that makes the rest possible. A capability that lives in a
-library can be called from a CLI, an MCP server, a web service, someone's Python app, or an
-any agent. A capability that lives in a CLI can only be called by whoever is willing to shell out to it.
+library can be called from a CLI, an MCP server, a web service, someone's own app, or any
+agent. A capability that lives in a CLI can only be called by whoever is willing to shell
+out to it.
 
 ## The library is the tool
 
@@ -30,7 +31,7 @@ Every smart tool ships a CLI, and it is a thin wrapper.
 
 It ships by default rather than on request. The CLI makes the tool usable from a shell
 script, from an agent that can run commands, and from any harness that has no way to import
-a Python object, and it requires no integration work from the caller.
+a library object, and it requires no integration work from the caller.
 
 Thin means the CLI hooks up argument parsing and I/O conventions and then calls the
 library. Domain logic in the CLI is a defect: it is capability the library cannot reach.
@@ -68,6 +69,6 @@ time has made its AI capability mandatory, which is the opposite of what this as
 The model-backed paths are ordinary capabilities of the library. They take arguments, they
 return values, and they live alongside the deterministic ones.
 
-The internals are the tool's business. Whether a given capability is implemented as code,
-as a model call, or as a mix is not something the caller needs to reason about in order to
-use it correctly.
+A caller is told which capabilities are model-backed, because cost and determinism are its
+concern. How a capability is implemented beyond that is the tool's business: which model,
+how many calls, what mix of code and inference.

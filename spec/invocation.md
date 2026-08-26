@@ -27,20 +27,27 @@ correctly.
 
 ## Self-description
 
-A smart tool describes its own surface at two levels of detail, for two different readers.
+A smart tool can describe its own surface: the capabilities it offers, their arguments and
+types, what each returns, and which of them are model-backed.
 
-`-h` is the user summary. Terse and scannable: the capabilities and a line about each. It
-is what someone types when they want to remember the name of a flag.
+Most of this is native to a library. Signatures and docstrings carry the names, arguments,
+types, and return shapes, and a caller holding the library reads them the way it reads any
+other dependency. Which capabilities are model-backed is not native to any language, and a
+smart tool declares it in a form a caller can read programmatically.
+
+The CLI renders what the library exposes, at two levels of detail for two different readers.
+
+`-h` is the user summary. Terse and scannable: the capabilities and a line about each. It is
+what someone types when they want to remember the name of a flag.
 
 `--help` is the complete listing, written for an agent deciding how to call the tool. Every
 capability, its arguments and their types, what it returns, and which capabilities are
-model-backed. It is longer than a person wants to read, and complete rather than
-selective.
+model-backed. It is longer than a person wants to read, and complete rather than selective.
 
-The two are not aliases.
+The two are not aliases. Neither adds anything the library does not already expose.
 
-Neither replaces the manifest. The manifest is read before deciding to install or invoke
-the tool at all; these are read once it is present and the question is how to drive it.
+Self-description covers how to drive the tool. The manifest covers whether to reach for it
+at all, and is reachable from the library in the same way.
 
 ## Passing context in
 
@@ -88,7 +95,7 @@ wrong from an empty result.
 Three cases are common enough to state:
 
 **A missing prerequisite** fails immediately, naming what is absent and how to install it.
-The manifest already declares these, so the failure and the manifest should agree.
+The manifest already declares these, so the failure and the manifest must agree.
 
 **A smart path with no provider configured** fails saying exactly that, and says what to
 configure. It does not fall back to a degraded deterministic answer, because a caller that
