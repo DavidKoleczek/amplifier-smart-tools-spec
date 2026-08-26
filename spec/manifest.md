@@ -5,18 +5,15 @@ the tool is, what it is for, and what it needs in order to run. It is how a call
 whether this is the right tool before invoking anything, and it is what a registry will
 consume once one exists.
 
-The manifest lives in the repo rather than in a registry on purpose. Prerequisites and
-platform support change when the code changes, so they are updated in the same commit and a
-registry reads from there. A registry that holds the only copy goes stale on the next
-release.
+The manifest lives in the tool's own repo. Prerequisites and platform support change when
+the code changes, so they are updated in the same commit. A registry reads from the repo
+rather than holding its own copy.
 
 ## Selection, not operation
 
 The manifest answers "is this the tool for my job, and can I run it here?"
 
 It does not answer "how do I call it." That is `--help` and the library's own signatures.
-Keeping the split sharp is what stops the manifest from decaying into a second, staler copy
-of the interface.
 
 The practical test: a field belongs in the manifest if a caller needs it *before* deciding
 to install or invoke the tool. Everything else belongs in the tool.
@@ -31,7 +28,7 @@ bad at, worked invocations. Advice, not law. It changes whenever taste changes.
 
 ## The frontmatter
 
-Small on purpose. Fields not listed here are not part of the manifest.
+Fields not listed here are not part of the manifest.
 
 ```yaml
 smart_tool_format: 1
@@ -71,7 +68,7 @@ different versions in its package metadata, its manifest, and its docs has three
 a question that has one, and every consumer picks the wrong one eventually.
 
 **`description`** says what the tool does and when to reach for it, in that order. It is
-read by humans scanning a registry and by agents deciding whether to route work here, so it
+read by users scanning a registry and by agents deciding whether to route work here, so it
 should carry the words someone would actually use when they need this tool.
 
 **`use_cases`** are the concrete jobs the tool is for. These are selection aids, not a
@@ -92,8 +89,7 @@ system, which already resolves them.
 ## The body
 
 Everything below the frontmatter is guidance, written for whoever is about to use the tool,
-human or agent. Typical contents: when this tool is the right choice and when it is not,
+user or agent. Typical contents: when this tool is the right choice and when it is not,
 sharp edges, worked invocations, and pointers to deeper documentation.
 
-It is deliberately not versioned and deliberately not law. Nothing may depend on a
-particular sentence being present.
+It is not versioned, and nothing may depend on a particular sentence being present.

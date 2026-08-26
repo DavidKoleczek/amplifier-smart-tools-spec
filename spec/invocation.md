@@ -1,6 +1,6 @@
 # Invocation
 
-Calling a smart tool should feel like calling any other tool. Arguments in, a result out,
+Calling a smart tool is like calling any other library or tool. Arguments in, a result out,
 an error that says what went wrong. The fact that some paths consult a model is an
 implementation detail of those paths, not a different calling convention.
 
@@ -29,18 +29,15 @@ correctly.
 
 A smart tool describes its own surface at two levels of detail, for two different readers.
 
-`-h` is the human summary. Terse and scannable: the capabilities and a line about each. It
+`-h` is the user summary. Terse and scannable: the capabilities and a line about each. It
 is what someone types when they want to remember the name of a flag.
 
 `--help` is the complete listing, written for an agent deciding how to call the tool. Every
 capability, its arguments and their types, what it returns, and which capabilities are
-model-backed. It is longer than a person wants to read, and that is the point. The reader
-is something that can take all of it at once and gains nothing from being protected from
-detail.
+model-backed. It is longer than a person wants to read, and complete rather than
+selective.
 
-This inverts the usual convention, where the two are aliases. The reason is that the two
-readers want genuinely different documents, and a tool that serves only one of them either
-buries a person in detail or starves an agent of it.
+The two are not aliases.
 
 Neither replaces the manifest. The manifest is read before deciding to install or invoke
 the tool at all; these are read once it is present and the question is how to drive it.
@@ -75,18 +72,13 @@ A result a caller can act on without parsing prose.
 At the library level, that means ordinary return values: objects, dataclasses, dictionaries.
 At the CLI, it means structured output on stdout. The test is whether the caller can hand
 the result to the next step programmatically. A model-backed capability that returns a
-paragraph of explanation has moved the work of understanding back onto the caller, which is
-the thing the tool exists to absorb.
+paragraph of explanation has moved the work of understanding back onto the caller.
 
 Where a capability produces an artifact, a profile, a document, a configuration, the result
 identifies the artifact rather than embedding it in a message.
 
-Where a result is derived from a model, it carries that fact, so a caller can apply
-different trust to a generated value than to a measured one.
-
-Long-running capabilities are worth calling out because they are common in this category. A
-capability that fans out across a domain can run far longer than a normal function call.
-How progress is reported is not settled below.
+A capability that fans out across a domain can run far longer than a normal function call.
+How progress is reported is not settled.
 
 ## Failure
 
@@ -104,29 +96,5 @@ asked for the smart path and got a lesser result without being told has been mis
 what it received.
 
 **A partial result** is a failure unless the capability documents partial completion as a
-valid outcome, in which case the result says which parts succeeded. Silently returning the
-portion that worked is the failure mode this rule exists to prevent.
-
-Retrying a failed call should be safe. Capabilities with side effects are designed so that
-a caller which retries after a timeout does not cause the work to happen twice.
-
-## Open questions
-
-**Whether smart paths are visibly marked.** The position above is that callers are told
-which capabilities are model-backed, on the grounds that cost and determinism are the
-caller's business, and that the `--help` listing is where they are told. The competing
-position, taken by `agent-tool.v1`, is that a conforming tool should be
-implementation-invisible, so that a tool stays free to change how a capability is
-implemented without breaking anyone. Both are defensible and they conflict. If the
-distinction is dropped, the `--help` listing loses that field and nothing else here changes.
-
-**Progress and streaming.** Nothing here specifies how a long-running capability reports
-progress, whether intermediate output can stream, or how a caller cancels. This is reserved
-in `agent-tool.v1` as well and is likely the first gap a real tool hits.
-
-**Cost reporting.** Whether a result should carry what it cost in tokens or time. Callers
-budgeting across many calls will want it; nothing needs it yet.
-
-**Where context granularity is expressed.** None, partial, and full are described as useful
-granularity, not as a required parameter with those names. Whether this becomes a common
-convention across tools or stays each tool's own choice is undecided.
+valid outcome, in which case the result says which parts succeeded. A capability never
+silently returns the portion that worked.

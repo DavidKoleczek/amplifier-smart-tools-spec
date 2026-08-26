@@ -5,8 +5,7 @@ other surface is a thin adapter that exposes the same capability in a different 
 
 This is the single decision that makes the rest possible. A capability that lives in a
 library can be called from a CLI, an MCP server, a web service, someone's Python app, or an
-agent that has never heard of Amplifier. A capability that lives in a CLI can only be
-called by whoever is willing to shell out to it.
+any agent. A capability that lives in a CLI can only be called by whoever is willing to shell out to it.
 
 ## The library is the tool
 
@@ -29,18 +28,16 @@ library happens to expose.
 
 Every smart tool ships a CLI, and it is a thin wrapper.
 
-The CLI is what makes the tool usable from a shell script, from an agent that can run
-commands, and from any harness that has no way to import a Python object. It is the surface
-that requires no integration work from the caller, which is why it ships by default rather
-than on request.
+It ships by default rather than on request. The CLI makes the tool usable from a shell
+script, from an agent that can run commands, and from any harness that has no way to import
+a Python object, and it requires no integration work from the caller.
 
 Thin means the CLI hooks up argument parsing and I/O conventions and then calls the
-library. Domain logic in the CLI is a defect, because it is capability that the library
-cannot reach.
+library. Domain logic in the CLI is a defect: it is capability the library cannot reach.
 
 The CLI may add things that only make sense at a command line. Loading a file path into a
-value the library takes as data is the common case, and it is legitimate precisely because
-the library still accepts the data directly.
+value the library takes as data is the common case, permitted while the library still
+accepts the data directly.
 
 ## Optional surfaces
 
@@ -56,14 +53,12 @@ some tools this is genuinely the right way to drive them. It must never be the o
 and it must not start unless asked. A tool that spins up a web server as a side effect of
 being used is doing something the caller did not request.
 
-**Others.** The list is open. The constraint is the same each time: a new surface is a new
-adapter over the same library, and it adds no capability of its own.
+**Others.** Each new surface is a new adapter over the same library, and it adds no capability of its own.
 
 ## The AI capability
 
 A smart tool has to do something genuinely powered by a model. If every path through it is
-deterministic code, it is a tool, and that is fine, but it is not a smart tool. This is the
-line that makes the category mean anything.
+deterministic code, it is a tool, and that is fine, but it is not a smart tool.
 
 At the same time, the straight code paths run with no model provider configured. A caller
 that only wants the deterministic capabilities never has to supply model credentials, and
@@ -71,22 +66,8 @@ the tool must not refuse to load without them. A tool that demands a provider at
 time has made its AI capability mandatory, which is the opposite of what this asks for.
 
 The model-backed paths are ordinary capabilities of the library. They take arguments, they
-return values, and they live alongside the deterministic ones rather than behind a separate
-door. What differs is that they are non-deterministic and they cost tokens, which is why
-the caller is told which is which. How they are told is covered in
-[invocation](invocation.md).
+return values, and they live alongside the deterministic ones.
 
 The internals are the tool's business. Whether a given capability is implemented as code,
 as a model call, or as a mix is not something the caller needs to reason about in order to
 use it correctly.
-
-## Open questions
-
-**Whether a generator is better than a convention.** Today each tool implements its own
-wrappers following the same pattern. The alternative is a generator that emits CLI and MCP
-surfaces from the library, or a generic host that loads libraries and exposes them. Both
-have been raised. Neither has been tried, and the pattern is cheap enough to keep until one
-of them is.
-
-**Packaging and distribution.** How a smart tool is published and installed, and under what
-naming, is unresolved and out of scope for this chapter.
