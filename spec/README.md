@@ -55,4 +55,6 @@ Smart tools are built on three principles that inform everything else in this sp
 - **[Invocation](invocation.md)**: calling a smart tool. Straight and smart paths,
   self-description, passing context in, getting artifacts out, and failure semantics.
 
+[Examples](examples.md) lists example smart tools.
+
 Future parts and ideas of the spec are documented in [`ROADMAP.md`](../ROADMAP.md).
